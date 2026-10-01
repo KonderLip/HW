@@ -138,11 +138,11 @@ class HashMap:
                     # If distance is more than max lookups, then immediately
                     # rehash the table. Load factor should be more than 0.25
                     # in case of a bad hash function.
-                    if ((self._element_count << 2) > self._primary_size
-                        and distance > self._max_lookups()):
+                    if (self._element_count << 2) > self._primary_size and distance > self._max_lookups():
                         self._rehash(self._primary_size << 1)
-                        return self._insert(key, value,
-                                            self._hasher(key) % self._primary_size)
+                        return self._insert(
+                            key, value, self._hasher(key) % self._primary_size
+                        )
                 self._start_pos = next_free
                 self._data[pos].next = next_free
                 pos = next_free
@@ -184,7 +184,7 @@ class HashMap:
 
     # Let (cellar_size_ = B * primary_size_).
     # The article says that this is the optimal value.
-    B = 7 / 43.
+    B = 7 / 43.0
 
     # Prime numbers for grow policy. The last is about 2^64.
     PRIMES = [
@@ -235,6 +235,7 @@ class HashMap:
 
 class _Data:
     """Information stored in a slot."""
+
     __slots__ = ("key", "value", "used", "deleted", "next")
 
     def __init__(self):
