@@ -53,6 +53,8 @@ class HashMap:
         pos = self._find(key, self._hasher(key) % self._primary_size)
         if pos == self.NONE:
             return False
+        self._data[pos].key = None
+        self._data[pos].value = None
         self._data[pos].used = False
         self._data[pos].deleted = True
         self._element_count -= 1
@@ -168,7 +170,7 @@ class HashMap:
 
     def _max_lookups(self) -> int:
         """Max lookups is log2 of primary_size."""
-        return max(4, int(math.log2(self._primary_size)))
+        return max(4, math.ceil(math.log2(self._primary_size)))
 
     def _rehash(self, n: int) -> None:
         """Rebuilds the table so that the primary_size is at least n."""
