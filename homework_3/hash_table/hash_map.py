@@ -40,11 +40,13 @@ class HashMap:
         self._element_count = 0
         self._start_pos = self._primary_size + self._cellar_size - 1
 
-    def insert(self, key, value) -> None:
-        """Inserts element. Does nothing if the key already exists."""
+    def insert(self, key, value) -> bool:
+        """Inserts element. Returns True if inserted, False if key already exists."""
         h = self._hasher(key) % self._primary_size
         if self._find(key, h) == self.NONE:
             self._insert(key, value, h)
+            return True
+        return False
 
     def erase(self, key) -> bool:
         """Erases element. Returns True if the key was present."""
