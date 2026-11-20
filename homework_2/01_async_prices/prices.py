@@ -77,7 +77,15 @@ async def get_prices_limited(shops: list[str], limit: int = 3) -> list[int]:
 
     Подсказка: asyncio.Semaphore(limit) и async with внутри вспомогательной функции.
     """
-    raise NotImplementedError
+    semaphore = asyncio.Semaphore(limit)
+
+    async def fetch_limited(shop: str) -> int:
+        async with semaphore:
+            return await fetch_price(shop)
+
+    return await asyncio.gather(
+        *(fetch_limited(shop) for shop in shops)
+    )
 
 
 if __name__ == "__main__":
