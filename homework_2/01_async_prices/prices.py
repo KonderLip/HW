@@ -24,7 +24,9 @@ async def get_prices_sequential(shops: list[str]) -> list[int]:
 
     Подсказка: обычный цикл for и await fetch_price(...) внутри.
     """
-    raise NotImplementedError
+    return [
+        await fetch_price(shop) for shop in shops
+    ]
 
 
 # ---------- Задача 1.2 ----------
@@ -35,7 +37,9 @@ async def get_prices_concurrent(shops: list[str]) -> list[int]:
 
     Подсказка: asyncio.gather.
     """
-    raise NotImplementedError
+    return await asyncio.gather(
+        *(fetch_price(shop) for shop in shops)
+    )
 
 
 # ---------- Задача 1.3 ----------
@@ -46,7 +50,13 @@ async def get_price_or_none(shop: str, timeout: float = 1.0) -> int | None:
 
     Подсказка: asyncio.wait_for и except TimeoutError.
     """
-    raise NotImplementedError
+    try:
+        return await asyncio.wait_for(
+            fetch_price(shop),
+            timeout=timeout,
+        )
+    except TimeoutError:
+        return None
 
 
 async def get_prices_with_timeout(shops: list[str], timeout: float = 1.0) -> list[int | None]:
@@ -54,7 +64,9 @@ async def get_prices_with_timeout(shops: list[str], timeout: float = 1.0) -> lis
 
     Подсказка: gather по get_price_or_none.
     """
-    raise NotImplementedError
+    return await asyncio.gather(
+        *(get_price_or_none(shop, timeout) for shop in shops)
+    )
 
 
 # ---------- Задача 1.4 (дополнительная) ----------

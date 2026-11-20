@@ -24,37 +24,37 @@ class LRUCache[K, V]:
     """
 
     def __init__(self, capacity: int) -> None:
-        # TODO:
-        # 1. Если capacity < 1 — raise ValueError("capacity должен быть >= 1").
-        # 2. Сохранить capacity в self._capacity.
-        # 3. self._data: OrderedDict[K, V] = OrderedDict()  — хранилище;
-        #    порядок ключей = порядок использования (в начале самый старый, в конце самый свежий).
-        # 4. self._lock = threading.RLock()  — один замок на все операции.
-        raise NotImplementedError
+        if capacity < 1:
+            raise ValueError("capacity должен быть >= 1")
+
+        self._capacity = capacity
+        self._data: OrderedDict[K, V] = OrderedDict()
+        self._lock = threading.RLock()
 
     @property
     def capacity(self) -> int:
-        # TODO: вернуть self._capacity.
-        raise NotImplementedError
+        return self._capacity
 
     def put(self, key: K, value: V) -> None:
-        # TODO: всё тело — внутри `with self._lock:`
-        # 1. Записать значение: self._data[key] = value.
-        # 2. Сделать ключ самым свежим: self._data.move_to_end(key).
-        # 3. Если len(self._data) > self._capacity — удалить самый старый:
-        #    self._data.popitem(last=False).
-        raise NotImplementedError
+        with self._lock:
+            self._data[key] = value
+            self._data.move_to_end(key)
+
+            if len(self._data) > self._capacity:
+                self._data.popitem(last=False)
 
     def get(self, key: K, default: V | None = None) -> V | None:
-        # TODO: всё тело — внутри `with self._lock:`
-        # 1. Если ключа нет — вернуть default (порядок НЕ трогать).
-        # 2. Иначе сделать ключ самым свежим (move_to_end) и вернуть значение.
-        raise NotImplementedError
+        with self._lock:
+            if key not in self._data:
+                return default
+
+            self._data.move_to_end(key)
+            return self._data[key]
 
     def __len__(self) -> int:
-        # TODO: под замком вернуть len(self._data).
-        raise NotImplementedError
+        with self._lock:
+            return len(self._data)
 
     def __contains__(self, key: object) -> bool:
-        # TODO: под замком вернуть key in self._data (порядок НЕ трогать).
-        raise NotImplementedError
+        with self._lock:
+            return key in self._data

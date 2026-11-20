@@ -22,7 +22,11 @@ async def send_email(user: str) -> str:
     """Отправить письмо одному пользователю (почтовый сервер отвечает ~0.5 с)."""
     text = await render_template(user)
     log(f"отправляю письмо {user}")
-    time.sleep(0.5)  # ждём ответа почтового сервера
+
+    # time.sleep блокировал поток event loop, поэтому asyncio.gather
+    # не мог переключиться на другие корутины во время ожидания.
+    await asyncio.sleep(0.5)
+
     log(f"письмо {user} доставлено")
     return f"{user}: {len(text)} символов"
 
